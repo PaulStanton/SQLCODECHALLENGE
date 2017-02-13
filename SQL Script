@@ -59,3 +59,34 @@ UPDATE Employee SET Salary=100000 WHERE EmployeeID = 1
 --Part 6 
 ALTER TABLE Employee
   ADD DateHired DATETIME Default(01/01/2016);
+  
+  --BONUS, Write a soft delete trigger
+
+-- Add active bit column
+ALTER TABLE Employee 
+	ADD Active bit Default(1) NOT NULL
+ALTER TABLE Department
+	ADD Active bit Default(1) NOT NULL
+--Create Triggers
+GO
+CREATE TRIGGER SoftDelete   
+ON Employee   
+INSTEAD OF  DELETE  
+AS   
+DECLARE @deletedEmployee INT
+ 
+       SELECT @deletedEmployee = DELETED.EmployeeID       
+       FROM DELETED
+  UPDATE Employee SET Active = 0 Where employeeEID = @deletedEmployee
+GO  
+
+CREATE TRIGGER SoftDelete2   
+ON Department   
+INSTEAD OF  DELETE  
+AS   
+DECLARE @deletedDepartment INT
+ 
+       SELECT @deletedDepartment = DELETED.DepartmentID      
+       FROM DELETED
+  UPDATE Employee SET Active = 0 Where DepartmentID = @deletedDepartment
+GO 
